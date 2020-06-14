@@ -1,8 +1,9 @@
 # Python Server
 
 This project was created using [PyCharm - Community Edition](https://www.jetbrains.com/de-de/pycharm/download) and [Python 3.8](https://www.python.org/downloads/) as project interpreter.
+The default/underlying database is a MongoDB deployed by MongoDB Atlas. However you can define your own Mongo DB.
 
-## Set up the MongoDB
+## Set up your MongoDB
 - Create Database 
 - Create necessary collection "sources" & fill it with the data from data/sources.json
 ![](images/dataInstruction.png)
@@ -10,7 +11,7 @@ This project was created using [PyCharm - Community Edition](https://www.jetbrai
 - Create necessary collection "entities" & fill it with the data from data/entities.json
 - Create necessary collection "impacts" & fill it with the data from data/impacts.json
 
-Update the database-url and the database-name in app.py to enable the connection the MongoDB you've just created.
+Update the database-url and the database-name in app.py to enable the connection to the MongoDB you've just created.
 
 ## Configurations to run the server locally
 Following packages are necessary to run the project: 
