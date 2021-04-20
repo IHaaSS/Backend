@@ -1,9 +1,8 @@
 from scipy import spatial
 import json
 from operator import itemgetter
-from normalization.norm import generate_id_list
+from logic.normalization import generate_id_list
 import numpy as np
-from bson.json_util import dumps
 
 
 def calculate_cosine(norm_user_incident, ref_incidents, sources, events, entities, impacts, step, temp):

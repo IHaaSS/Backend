@@ -1,0 +1,9 @@
+scipy
+nltk
+numpy
+flask
+flask-cors
+spacy
+python-dotenv
+web3
+pymongo

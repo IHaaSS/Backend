@@ -1,7 +1,6 @@
 from nltk import CFG, ChartParser, Production, Nonterminal
 from random import choice
-from normalization.norm import generate_id_list, generate_name_list
-import json
+from logic.normalization import generate_id_list, generate_name_list
 import spacy
 en_nlp = spacy.load('en_core_web_sm')
 
@@ -60,15 +59,15 @@ def generate_question(attribute):
     return ' '.join(produce(gr, gr.start()))
 
 
-def generate_counter_question (attribute):
+def generate_counter_question(attribute):
     parser = ChartParser(generate_counter_grammar(attribute, ))
     gr = parser.grammar()
     return ' '.join(produce(gr, gr.start()))
 
 
 def get_attribute_name(attr_id, topic):
-    id_list = generate_id_list(json.loads(topic)[0], [])
-    names = generate_name_list(json.loads(topic)[0], [])
+    id_list = generate_id_list(topic[0], [])
+    names = generate_name_list(topic[0], [])
     index = id_list.index(attr_id)
     attribute = names[index]
     return attribute
