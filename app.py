@@ -12,7 +12,7 @@ from bson.json_util import dumps, loads
 app = Flask(__name__)
 CORS(app)
 app.config['MONGO_DBNAME'] = 'test'
-app.config["MONGO_URI"] = 'mongodb+srv://admin:waschbecken@ba-tool-c4fgc.mongodb.net/test?retryWrites=true&w=majority'
+app.config["MONGO_URI"] = 'mongodb://test:changeME@mongo/test?retryWrites=true&w=majority'
 mongo = PyMongo(app)
 db = mongo.db
 coll_i = db.predef_incidents
@@ -449,4 +449,4 @@ def check_for_lower_granularity(list_source, nui_attrs, attr_Id):
         return nui_attrs
 
 
-app.run(debug=True)
+app.run(debug=True, host="0.0.0.0")
