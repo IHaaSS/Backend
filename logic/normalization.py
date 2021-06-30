@@ -3,18 +3,17 @@ import numpy as np
 
 
 # generates list of attribute ids
-import logic.questions
 
 
 def generate_id_list(elements, result):
     for element in elements['elements']:
         t = 'elements'
         if t in element:
-            id = logic.questions.get("id")
+            id = element.get("id")
             result.append(id)
             generate_id_list(element, result)
         else:
-            result.append(logic.questions.get("id"))
+            result.append(element.get("id"))
     return result
 
 
@@ -23,11 +22,11 @@ def generate_name_list(elements, result):
     for element in elements['elements']:
         t = 'elements'
         if t in element:
-            name = logic.questions.get("name")
+            name = element.get("name")
             result.append(name)
             generate_name_list(element, result)
         else:
-            result.append(logic.questions.get("name"))
+            result.append(element.get("name"))
     return result
 
 
