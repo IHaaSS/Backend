@@ -6,4 +6,5 @@ flask-cors
 spacy
 python-dotenv
 web3
-pymongo
+flask-pymongo
+dnspython

@@ -224,4 +224,4 @@ def post_answer():
         return execute_refinement(u, copy_nui, ref_norm_incidents, sources, events, entities, impacts, s, ev, en, im, body)
 
 
-app.run(debug=True)
+app.run(debug=True, host="0.0.0.0")
