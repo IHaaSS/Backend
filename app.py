@@ -1,16 +1,14 @@
 from flask import Flask, request
 from flask_cors import CORS
+from bson import json_util
+from storage import mongo as db
+from storage.mongo import get_norm_user_incident
 from logic.normalization import normalize_incident, generate_id_list, reverse_norm_incident
-import json
-
 from logic.questions import execute_refinement, execute_completion
 from logic.utils import update_norm_user_incident
-from storage.mongo import get_norm_user_incident
 
 app = Flask(__name__)
 CORS(app)
-
-from storage import mongo as db
 
 
 #####################
@@ -21,7 +19,7 @@ from storage import mongo as db
 @app.route('/incidents', methods=['GET'])
 def get_incidents():
     incidents = db.get_incidents()
-    return json.dumps(incidents)
+    return json_util.dumps(incidents)
 
 
 @app.route('/incidents', methods=['POST'])
@@ -31,7 +29,7 @@ def post_incident():
     incident['transmittedBy'] = 'admin'
     db.insert_incident(incident)
     post_norm_ref_incident(incident)
-    return json.dumps(incident)
+    return json_util.dumps(incident)
 
 
 @app.route('/incidents/<incident_id>', methods=['DELETE'])
@@ -48,7 +46,7 @@ def post_StagedIncident():
     db.insert_incident(incident)
     post_norm_ref_incident(incident)
     delete_user_incident(body['myId'])
-    return json.dumps(incident)
+    return json_util.dumps(incident)
 
 ################################
 # normalized reference incidents
@@ -58,7 +56,7 @@ def post_StagedIncident():
 @app.route('/norm_incidents', methods=['GET'])
 def get_norm_ref_incidents():
     incidents = db.get_norm_incidents()
-    return json.dumps(incidents)
+    return json_util.dumps(incidents)
 
 
 @app.route('/norm_incidents', methods=['POST'])
@@ -69,7 +67,7 @@ def post_norm_ref_incident(incident):
     impacts = get_impacts()
     norm_incident = normalize_incident(incident, sources, events, entities, impacts)
     db.insert_norm_incident(norm_incident)
-    return json.dumps(norm_incident)
+    return json_util.dumps(norm_incident)
 
 
 @app.route('/norm_incidents/<incident_id>', methods=['DELETE'])
@@ -85,7 +83,7 @@ def delete_norm_incident(incident_id):
 @app.route('/user_incidents', methods=['GET'])
 def get_user_incidents():
     incidents = db.get_user_incidents()
-    return json.dumps(incidents)
+    return json_util.dumps(incidents)
 
 
 @app.route('/user_incidents', methods=['POST'])
@@ -132,25 +130,25 @@ def post_norm_user_incident(incident, sources, events, entities, impacts):
 @app.route('/sources', methods=['GET'])
 def get_sources():
     sources = db.get_sources()
-    return json.dumps(sources)
+    return json_util.dumps(sources)
 
 
 @app.route('/impacts', methods=['GET'])
 def get_impacts():
     impacts = db.get_impacts()
-    return json.dumps(impacts)
+    return json_util.dumps(impacts)
 
 
 @app.route('/events', methods=['GET'])
 def get_events():
     events = db.get_events()
-    return json.dumps(events)
+    return json_util.dumps(events)
 
 
 @app.route('/entities', methods=['GET'])
 def get_entities():
     entities = db.get_entities()
-    return json.dumps(entities)
+    return json_util.dumps(entities)
 
 
 ################
@@ -161,7 +159,7 @@ def get_entities():
 def post_question():
     body = request.get_json()
     q = {
-        'id': db.get_new_question_id(),
+        'questionId': db.get_new_question_id(),
         'text': body['text']
     }
 
@@ -172,7 +170,7 @@ def post_question():
             q_counter['text'] = body['counterText']
             db.insert_question_counter(q_counter)
     db.insert_question(q)
-    return json.dumps(q)
+    return json_util.dumps(q)
 
 
 @app.route('/relations', methods=['POST'])

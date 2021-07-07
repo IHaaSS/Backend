@@ -1,8 +1,8 @@
 import pymongo
 from pymongo import MongoClient
+db = 'test'
+uri = 'mongodb://test:changeME@127.0.0.1:27017/test?retryWrites=true&w=majority'
 
-db = 'test',
-uri = 'mongodb+srv://admin:waschbecken@ba-tool-c4fgc.mongodb.net/test?retryWrites=true&w=majority'
 client = MongoClient(uri)
 db = client[db]
 coll_i = db.predef_incidents
@@ -19,20 +19,21 @@ coll_rel = db.relations
 
 
 def get_incidents():
-    list(coll_i.find())
+    return coll_i.find()
 
 
 def insert_incident(incident):
-    id = coll_i.find_one(sort=[('myId', pymongo.DESCENDING)])['myId']
+    id = coll_i.find_one(sort=[('myId', pymongo.DESCENDING)])#
     if id is None:
         incident['myId'] = 0
     else:
-        incident['myId'] = id + 1
+        incident['myId'] = id['myId'] + 1
     coll_i.insert_one(incident)
 
 
 def delete_incident(incident_id):
     coll_i.delete_one({'_id': incident_id})
+
 
 def get_norm_incidents():
     return coll_ni.find()
@@ -68,8 +69,8 @@ def get_user_incident(id):
 
 
 def get_new_user_incident_id():
-    id = coll_ui.find_one(sort=[('myId', pymongo.DESCENDING)])['myId']
-    return 0 if id is None else id+1
+    id = coll_ui.find_one(sort=[('myId', pymongo.DESCENDING)])
+    return 0 if id is None else id['myId']+1
 
 
 def insert_user_incident(incident):
@@ -102,8 +103,8 @@ def get_questions():
 
 
 def get_new_question_id():
-    id = coll_que.find_one(sort=[('questionId', pymongo.DESCENDING)])['questionId']
-    return 0 if id is None else id+1
+    id = coll_que.find_one(sort=[('questionId', pymongo.DESCENDING)])
+    return 0 if id is None else id['questionId']+1
 
 
 def insert_question(question):
