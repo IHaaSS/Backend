@@ -3,6 +3,7 @@ from flask_cors import CORS
 from bson import json_util
 from storage import mongo as db
 from storage.mongo import get_norm_user_incident
+import storage.ethereum
 from logic.normalization import normalize_incident, generate_id_list, reverse_norm_incident
 from logic.questions import execute_refinement, execute_completion
 from logic.utils import update_norm_user_incident
