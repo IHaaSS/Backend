@@ -1,7 +1,5 @@
 import ipfshttpclient
 import os
-from dotenv import load_dotenv
-load_dotenv()
 ipfs = ipfshttpclient.connect(
     "/ip4/" + os.getenv('IPFS_IP') +
     "/tcp/" + os.getenv('IPFS_PORT') + "/http"

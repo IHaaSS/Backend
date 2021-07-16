@@ -1,4 +1,6 @@
 import unittest
+from dotenv import load_dotenv
+load_dotenv()
 from storage import ipfs
 
 test_hash = "Qmdb6QCW1AWCyjrtLc8WXwFPU8fAh1ZvrVkqduFiVFiEYS"
