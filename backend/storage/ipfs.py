@@ -6,9 +6,19 @@ ipfs = ipfshttpclient.connect(
 )
 
 
-def write_json(data):
+async def write_file(data):
     """
-    Write a single object to a JSON file in a local IPFS path (MFS)
+    Write a file to IPFS
+    :param data: file
+    :return: IPFS hash
+    """
+    response = ipfs.add(data)
+    return response['Hash']
+
+
+async def write_json(data):
+    """
+    Write a single object to a JSON
     :return: IPFS hash
     """
     return ipfs.add_json(data)

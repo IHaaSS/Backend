@@ -1,20 +1,25 @@
 import unittest
 from dotenv import load_dotenv
 load_dotenv()
-from storage import ipfs
-
-test_hash = "Qmdb6QCW1AWCyjrtLc8WXwFPU8fAh1ZvrVkqduFiVFiEYS"
+from backend.storage import ipfs
+from _test_data import *
 
 
 class TestIPFS(unittest.TestCase):
-    def test_write(self):
-        data = {'test': 1}
-        hash = ipfs.write_json(data)
-        self.assertEqual(hash, test_hash)
+    def test_write_file(self):
+        with open(test_file, 'rb') as f:
+            hash = ipfs.write_file(f)
 
-    def test_read(self):
-        data = ipfs.read_json(test_hash)
-        self.assertEqual(data['test'], 1)
+        self.assertEqual(hash[:2], 'Qm')
+
+    def test_write_json(self):
+        data = {'content': 'test parent comment'}
+        hash = ipfs.write_json(data)
+        self.assertEqual(hash, comment1)
+
+    def test_read_json(self):
+        data = ipfs.read_json(comment1)
+        self.assertIn('content', data)
 
 
 if __name__ == '__main__':

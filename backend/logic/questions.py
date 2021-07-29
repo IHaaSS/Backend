@@ -1,8 +1,8 @@
-from logic.utils import create_temp_incident
-from calculations.calculate import calculate_cosine
-from logic.questionGeneration import get_attribute_name, generate_question, generate_counter_question, \
+from backend.logic.utils import create_temp_incident
+from backend.calculations.calculate import calculate_cosine
+from backend.logic.questionGeneration import get_attribute_name, generate_question, generate_counter_question, \
     generate_mc_question
-from storage import mongo as db
+from backend.storage import mongo as db
 
 
 def get_questions(ids, phase):

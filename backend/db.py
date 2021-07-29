@@ -1,18 +1,14 @@
-from dotenv import load_dotenv
-load_dotenv()
+from flask import Blueprint, request
 
-from flask import Flask, request
-from flask_cors import CORS
 from bson import json_util
-from storage import mongo as db
-from storage.mongo import get_norm_user_incident
-import storage.ethereum
-from logic.normalization import normalize_incident, generate_id_list, reverse_norm_incident
-from logic.questions import execute_refinement, execute_completion
-from logic.utils import update_norm_user_incident
+from backend.storage import mongo as db
+from backend.storage.mongo import get_norm_user_incident
 
-app = Flask(__name__)
-CORS(app)
+from backend.logic.normalization import normalize_incident, generate_id_list, reverse_norm_incident
+from backend.logic.questions import execute_refinement, execute_completion
+from backend.logic.utils import update_norm_user_incident
+
+bp = Blueprint("db", __name__)
 
 
 #####################
@@ -20,13 +16,13 @@ CORS(app)
 #####################
 
 
-@app.route('/incidents', methods=['GET'])
+@bp.route('/incidents', methods=['GET'])
 def get_incidents():
     incidents = db.get_incidents()
     return json_util.dumps(incidents)
 
 
-@app.route('/incidents', methods=['POST'])
+@bp.route('/incidents', methods=['POST'])
 def post_incident():
     body = request.get_json()
     incident = body
@@ -36,13 +32,13 @@ def post_incident():
     return json_util.dumps(incident)
 
 
-@app.route('/incidents/<incident_id>', methods=['DELETE'])
+@bp.route('/incidents/<incident_id>', methods=['DELETE'])
 def delete_incident(incident_id):
     db.delete_incident(incident_id)
     return '', 200
 
 
-@app.route('/transferIncidents', methods=['POST'])
+@bp.route('/transferIncidents', methods=['POST'])
 def post_StagedIncident():
     body = request.get_json()
     incident = {'title': body['title'], 'sources': body['sources'], 'events': body['events'],
@@ -57,13 +53,13 @@ def post_StagedIncident():
 ################################
 
 
-@app.route('/norm_incidents', methods=['GET'])
+@bp.route('/norm_incidents', methods=['GET'])
 def get_norm_ref_incidents():
     incidents = db.get_norm_incidents()
     return json_util.dumps(incidents)
 
 
-@app.route('/norm_incidents', methods=['POST'])
+@bp.route('/norm_incidents', methods=['POST'])
 def post_norm_ref_incident(incident):
     sources = get_sources()
     events = get_events()
@@ -74,7 +70,7 @@ def post_norm_ref_incident(incident):
     return json_util.dumps(norm_incident)
 
 
-@app.route('/norm_incidents/<incident_id>', methods=['DELETE'])
+@bp.route('/norm_incidents/<incident_id>', methods=['DELETE'])
 def delete_norm_incident(incident_id):
     db.delete_norm_incident(incident_id)
     return '', 200
@@ -84,13 +80,13 @@ def delete_norm_incident(incident_id):
 # user incidents
 #################
 
-@app.route('/user_incidents', methods=['GET'])
+@bp.route('/user_incidents', methods=['GET'])
 def get_user_incidents():
     incidents = db.get_user_incidents()
     return json_util.dumps(incidents)
 
 
-@app.route('/user_incidents', methods=['POST'])
+@bp.route('/user_incidents', methods=['POST'])
 def post_user_incident():
     body = request.get_json()
     user_incident = body
@@ -107,7 +103,7 @@ def post_user_incident():
     return question_response
 
 
-@app.route('/user_incidents/<incident_id>', methods=['DELETE'])
+@bp.route('/user_incidents/<incident_id>', methods=['DELETE'])
 def delete_user_incident(incident_id):
     if incident_id is None:
         incident_id = request.get()
@@ -120,7 +116,7 @@ def delete_user_incident(incident_id):
 ################################
 
 
-@app.route('/norm_UserIncidents', methods=['POST'])
+@bp.route('/norm_UserIncidents', methods=['POST'])
 def post_norm_user_incident(incident, sources, events, entities, impacts):
     norm_incident = normalize_incident(incident, sources, events, entities, impacts)
     db.insert_norm_user_incident(norm_incident)
@@ -131,25 +127,25 @@ def post_norm_user_incident(incident, sources, events, entities, impacts):
 # get topics / attributes
 ################################
 
-@app.route('/sources', methods=['GET'])
+@bp.route('/sources', methods=['GET'])
 def get_sources():
     sources = db.get_sources()
     return json_util.dumps(sources)
 
 
-@app.route('/impacts', methods=['GET'])
+@bp.route('/impacts', methods=['GET'])
 def get_impacts():
     impacts = db.get_impacts()
     return json_util.dumps(impacts)
 
 
-@app.route('/events', methods=['GET'])
+@bp.route('/events', methods=['GET'])
 def get_events():
     events = db.get_events()
     return json_util.dumps(events)
 
 
-@app.route('/entities', methods=['GET'])
+@bp.route('/entities', methods=['GET'])
 def get_entities():
     entities = db.get_entities()
     return json_util.dumps(entities)
@@ -159,7 +155,7 @@ def get_entities():
 # questions
 ################
 
-@app.route('/questions', methods=['POST'])
+@bp.route('/questions', methods=['POST'])
 def post_question():
     body = request.get_json()
     q = {
@@ -177,7 +173,7 @@ def post_question():
     return json_util.dumps(q)
 
 
-@app.route('/relations', methods=['POST'])
+@bp.route('/relations', methods=['POST'])
 def post_relation(question_id, temp):
     topics = ['source', 'event', 'entity', 'impact']
     topics_plural = ['sources', 'events', 'entities', 'impacts']
@@ -189,7 +185,7 @@ def post_relation(question_id, temp):
 
 
 # handle response from frontend after user answered questions
-@app.route('/answer', methods=['POST'])
+@bp.route('/answer', methods=['POST'])
 def post_answer():
     body = request.get_json()
     nui = get_norm_user_incident(body['id'])
@@ -225,5 +221,3 @@ def post_answer():
         db.insert_norm_user_incident(u)
         return execute_refinement(u, copy_nui, ref_norm_incidents, sources, events, entities, impacts, s, ev, en, im, body)
 
-
-app.run(debug=True, host="0.0.0.0")

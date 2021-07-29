@@ -1,10 +1,9 @@
 scipy
-nltk
+nltk>=3.6.2
 numpy
-flask
+flask[async]>=2.0
 flask-cors
-spacy
+spacy>=3.1
 python-dotenv
 web3
 ipfshttpclient
-dnspython

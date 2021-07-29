@@ -4,4 +4,5 @@ WORKDIR /app
 COPY ./requirements .
 RUN pip install -r requirements
 RUN python -m spacy download en_core_web_sm
-CMD [ "python", "./app.py" ]
+ENV FLASK_APP=backend
+CMD [ "flask", "run" ]

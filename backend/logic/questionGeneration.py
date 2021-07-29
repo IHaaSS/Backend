@@ -1,6 +1,6 @@
 from nltk import CFG, ChartParser, Production, Nonterminal
 from random import choice
-from logic.normalization import generate_id_list, generate_name_list
+from backend.logic.normalization import generate_id_list, generate_name_list
 import spacy
 en_nlp = spacy.load('en_core_web_sm')
 

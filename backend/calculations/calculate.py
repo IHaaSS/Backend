@@ -1,7 +1,7 @@
 from scipy import spatial
 import json
 from operator import itemgetter
-from logic.normalization import generate_id_list
+from backend.logic.normalization import generate_id_list
 import numpy as np
 
 
