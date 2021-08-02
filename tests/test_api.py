@@ -23,7 +23,17 @@ class TestAPI(unittest.TestCase):
         attachment.close()
         self.assertEqual(response.status_code, 200)
 
-    def test_incidents(self):
+    def test_add_incident_comment(self):
+        attachment = open(test_file, 'rb')
+        response = self.app.post('/contract/incidents/comments', data={
+            'parent': comment1b,
+            'incident': incident1b,
+            'attachment': attachment,
+            'attachmentName': test_file
+        }, content_type="multipart/form-data")
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_incidents(self):
         response = self.app.get('/contract/incidents')
         incidents = json.loads(response.data)
         self.assertGreaterEqual(len(incidents), 1)
@@ -34,6 +44,10 @@ class TestAPI(unittest.TestCase):
         response = self.app.get('/ipfs/' + incident1)
         result = json.loads(response.data)
         self.assertEqual(len(result), 8)
+
+    def test_ipfs_file(self):
+        response = self.app.get('/ipfs/' + attachment)
+        self.assertGreater(len(response.data)/1000, 100)
 
 
 if __name__ == '__main__':

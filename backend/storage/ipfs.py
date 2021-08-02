@@ -16,6 +16,10 @@ async def write_file(data):
     return response['Hash']
 
 
+async def write_str(data):
+    return ipfs.add_str(data)
+
+
 async def write_json(data):
     """
     Write a single object to a JSON
@@ -32,3 +36,6 @@ def read_json(hash):
     """
     return ipfs.get_json(hash)
 
+
+def read(hash):
+    return ipfs.cat(hash)
