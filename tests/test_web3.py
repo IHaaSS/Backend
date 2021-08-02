@@ -1,8 +1,9 @@
 import aiounittest
 import unittest
+import sys
 from dotenv import load_dotenv
-
 load_dotenv()
+sys.path.insert(0, '..')
 from backend.storage import ethereum as eth
 from _test_data import *
 
@@ -15,10 +16,9 @@ attachb = eth.ipfs2bytes(attachment)
 
 class TestWeb3(aiounittest.AsyncTestCase):
 
-    @unittest.skip
     def test_init_contract(self):
-        eth.add_incident(incident1b, [{'name': 'test', 'content': attachb}])
-        eth.add_incident(incident2b, [])
+        eth.add_incident(incident1, [{'name': 'test', 'content': attachb}])
+        eth.add_incident(incident2, [])
         eth.add_comment(comment1b, incident1b, comment1b, [('testattachment', attachb)])
         eth.add_comment(comment1b, incident1b, comment2b, [])
         eth.add_comment(comment1b, incident2b, comment1b, [])
