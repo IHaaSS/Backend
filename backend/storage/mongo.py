@@ -1,7 +1,7 @@
 import pymongo
 from pymongo import MongoClient
 db = 'test'
-uri = 'mongodb://test:changeME@127.0.0.1:27017/test?retryWrites=true&w=majority'
+uri = 'mongodb://test:changeME@mongo:27017/test?retryWrites=true&w=majority'
 
 client = MongoClient(uri)
 db = client[db]

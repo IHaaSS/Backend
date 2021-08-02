@@ -1,8 +1,18 @@
-FROM python:3.8
+FROM node
 EXPOSE 5000/tcp
+RUN apt-get update
+RUN apt-get install python3 -y
+RUN apt-get install python3-pip -y
+RUN pip3 install --upgrade pip
+RUN git clone https://github.com/IHaaSS/contract.git
+WORKDIR /contract
+COPY ./deployment/truffle/truffle-config.js .
+RUN npm i -g truffle
+# RUN truffle migrate
 WORKDIR /app
 COPY ./requirements .
-RUN pip install -r requirements
-RUN python -m spacy download en_core_web_sm
+RUN pip3 install -r requirements
+RUN python3 -m spacy download en_core_web_sm
 ENV FLASK_APP=backend
-CMD [ "flask", "run" ]
+CMD ["/bin/bash", "./deployment/startup.sh"]
+# CMD [ "flask", "run" ]
