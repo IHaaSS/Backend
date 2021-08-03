@@ -1,7 +1,5 @@
 import unittest
 import json
-from dotenv import load_dotenv
-load_dotenv()
 from backend import create_app
 from _test_data import *
 
@@ -11,8 +9,18 @@ class TestAPI(unittest.TestCase):
         app = create_app()
         self.app = app.test_client()
 
+    def test_post_incident(self):
+        data = open(test_incident, 'r')
+        response = self.app.post('/incidents', json=json.load(data))
+        self.assertEqual(response.status_code, 200)
+
+    def test_post_user_incident(self):
+        data = open(test_incident, 'r')
+        response = self.app.post('/user_incidents', json=json.load(data))
+        self.assertEqual(response.status_code, 200)
+
     def test_add_incident(self):
-        incident = open('../data/entities.json', 'r')
+        incident = open(test_incident, 'r')
         attachment = open(test_file, 'rb')
         response = self.app.post('/contract/incidents', data={
             'incident': incident.read(),

@@ -1,7 +1,9 @@
+import os
 import pymongo
 from pymongo import MongoClient
 db = 'test'
-uri = 'mongodb://test:changeME@mongo:27017/test?retryWrites=true&w=majority'
+uri = 'mongodb://' + os.getenv('MONGO_USER') + ':' + os.getenv('MONGO_PASS') + '@' + os.getenv('MONGO_IP') +\
+      ':27017/test?retryWrites=true&w=majority'
 
 client = MongoClient(uri)
 db = client[db]

@@ -1,9 +1,7 @@
 import aiounittest
 import unittest
-import sys
 from dotenv import load_dotenv
 load_dotenv()
-sys.path.insert(0, '..')
 from backend.storage import ethereum
 from _test_data import *
 

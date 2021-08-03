@@ -17,7 +17,7 @@ class IncidentsContract:
         w3.eth.default_account = acct.address
 
         # Contract setup
-        with open('../../contract/build/contracts/Incidents.json', 'r') as file:
+        with open('../contract/build/contracts/Incidents.json', 'r') as file:
             abi = json.load(file)
 
         deployments = list(abi['networks'].items())

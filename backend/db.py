@@ -99,7 +99,6 @@ def post_user_incident():
     norm_ref_incidents = get_norm_ref_incidents()
     question_response = execute_completion(user_incident, sources, events, entities, impacts, norm_user_incident, norm_ref_incidents)
     db.insert_user_incident(user_incident)
-    db.insert_user_incident(user_incident)
     return question_response
 
 
