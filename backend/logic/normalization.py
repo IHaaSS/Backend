@@ -1,10 +1,7 @@
-import json
 import numpy as np
 
 
 # generates list of attribute ids
-
-
 def generate_id_list(elements, result):
     for element in elements['elements']:
         t = 'elements'
@@ -58,21 +55,19 @@ def reverse_norm_incident(norm_incident, sources, events, entities, impacts, use
     eventsNI = np.array(norm_incident['normEvents'])
     entitiesNI = np.array(norm_incident['normEntities'])
     impactsNI = np.array(norm_incident['normImpacts'])
-    print(user_incident)
     rev_incident = user_incident
-    rev_incident['sources'] = reverse_attributes(generate_name_list(json.loads(sources)[0], []),
-                                                 generate_id_list(json.loads(sources)[0], []),
+    rev_incident['sources'] = reverse_attributes(generate_name_list(sources, []),
+                                                 generate_id_list(sources, []),
                                                  np.where(sourcesNI != 0)[0], [], 'source')
-    rev_incident['events'] = reverse_attributes(generate_name_list(json.loads(events)[0], []),
-                                                generate_id_list(json.loads(events)[0], []),
+    rev_incident['events'] = reverse_attributes(generate_name_list(events, []),
+                                                generate_id_list(events, []),
                                                 np.where(eventsNI != 0)[0], [], 'event')
-    rev_incident['entities'] = reverse_attributes(generate_name_list(json.loads(entities)[0], []),
-                                                  generate_id_list(json.loads(entities)[0], []),
+    rev_incident['entities'] = reverse_attributes(generate_name_list(entities, []),
+                                                  generate_id_list(entities, []),
                                                   np.where(entitiesNI != 0)[0], [], 'entity')
-    rev_incident['impacts'] = reverse_attributes(generate_name_list(json.loads(impacts)[0], []),
-                                                 generate_id_list(json.loads(impacts)[0], []),
+    rev_incident['impacts'] = reverse_attributes(generate_name_list(impacts, []),
+                                                 generate_id_list(impacts, []),
                                                  np.where(impactsNI != 0)[0], [], 'impact')
-    print(rev_incident)
     return rev_incident
 
 
@@ -96,10 +91,10 @@ def reverse_attributes(names, ids, indices, reversed_list, keyword):
 
 # generates normalized incident
 def normalize_incident(incident, sources, events, entities, impacts):
-    list_source = generate_id_list(json.loads(sources)[0], [])
-    list_events = generate_id_list(json.loads(events)[0], [])
-    list_entities = generate_id_list(json.loads(entities)[0], [])
-    list_impacts = generate_id_list(json.loads(impacts)[0], [])
+    list_source = generate_id_list(sources, [])
+    list_events = generate_id_list(events, [])
+    list_entities = generate_id_list(entities, [])
+    list_impacts = generate_id_list(impacts, [])
 
     norm = {'title': incident["title"], 'refId': incident["myId"],
             'normSources': generate_vector_list(list_source, incident, 'sources', 'source'),

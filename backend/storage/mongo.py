@@ -1,4 +1,5 @@
 import os
+import asyncio
 import pymongo
 from pymongo import MongoClient
 
@@ -38,11 +39,11 @@ def delete_incident(incident_id):
     coll_i.delete_one({'_id': incident_id})
 
 
-def get_norm_incidents():
-    return coll_ni.find()
+async def get_norm_incidents():
+    return list(coll_ni.find())
 
 
-def insert_norm_incident(norm_incident):
+async def insert_norm_incident(norm_incident):
     coll_ni.insert_one(norm_incident)
 
 
@@ -50,7 +51,7 @@ def delete_norm_incident(incident_id):
     coll_ni.delete_one({'id': incident_id})
 
 
-def get_norm_user_incident(id):
+async def get_norm_user_incident(id):
     return coll_nui.find_one({'refId': id})
 
 
@@ -76,7 +77,7 @@ def get_new_user_incident_id():
     return 0 if id is None else id['myId']+1
 
 
-def insert_user_incident(incident):
+async def insert_user_incident(incident):
     coll_ui.insert_one(incident)
 
 
@@ -85,19 +86,28 @@ def delete_user_incident(incident_id):
     return '', 200
 
 
-def get_sources():
+async def get_categories():
+    return await asyncio.gather(*[
+        get_sources(),
+        get_events(),
+        get_impacts(),
+        get_entities()
+    ])
+
+
+async def get_sources():
     return coll_sour.find_one()
 
 
-def get_impacts():
-    return coll_im.find_one()
-
-
-def get_events():
+async def get_events():
     return coll_eve.find_one()
 
 
-def get_entities():
+async def get_impacts():
+    return coll_im.find_one()
+
+
+async def get_entities():
     return coll_ent.find_one()
 
 

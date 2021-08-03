@@ -1,13 +1,11 @@
 from scipy import spatial
-import json
 from operator import itemgetter
 from backend.logic.normalization import generate_id_list
 import numpy as np
 
 
-def calculate_cosine(norm_user_incident, ref_incidents, sources, events, entities, impacts, step, temp):
+def calculate_cosine(norm_user_incident, norm_ref_incidents, sources, events, entities, impacts, step, temp):
     cosine_list = []
-    norm_ref_incidents = json.loads(ref_incidents)
     joined_user_vector = norm_user_incident["normSources"] + norm_user_incident["normEvents"] + norm_user_incident["normEntities"] + norm_user_incident["normImpacts"]
     for incident in norm_ref_incidents:
         joined_ref_vector = incident["normSources"] + incident["normEvents"] + incident["normEntities"] + incident[
