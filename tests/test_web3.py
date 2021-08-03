@@ -1,9 +1,8 @@
+from tests._test_data import *
 import aiounittest
-import unittest
 from dotenv import load_dotenv
 load_dotenv()
 from backend.storage import ethereum
-from _test_data import *
 
 icd = ethereum.IncidentsContract()
 

@@ -1,6 +1,7 @@
 from backend.storage import ethereum as eth
 import os
-os.chdir('..')
+if os.path.basename(os.getcwd()) == 'tests':
+    os.chdir('..')
 
 
 test_incident='tests/data/incident.json'
