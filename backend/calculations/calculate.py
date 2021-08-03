@@ -32,7 +32,7 @@ def compare_lists(incident_one, incident_two, sources, events, entities, impacts
 
 
 def get_attribute_ids(index_list, category):
-    id_list = generate_id_list(json.loads(category)[0], [])
+    id_list = generate_id_list(category, [])
     ids = []
     for index in index_list:
         ids.append(id_list[index])

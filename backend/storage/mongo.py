@@ -1,6 +1,7 @@
 import os
 import pymongo
 from pymongo import MongoClient
+
 db = 'test'
 uri = 'mongodb://' + os.getenv('MONGO_USER') + ':' + os.getenv('MONGO_PASS') + '@' + os.getenv('MONGO_IP') +\
       ':27017/test?retryWrites=true&w=majority'
@@ -50,7 +51,7 @@ def delete_norm_incident(incident_id):
 
 
 def get_norm_user_incident(id):
-    return coll_nui.find({'refId': id})
+    return coll_nui.find_one({'refId': id})
 
 
 def insert_norm_user_incident(incident):
@@ -85,19 +86,19 @@ def delete_user_incident(incident_id):
 
 
 def get_sources():
-    return coll_sour.find()
+    return coll_sour.find_one()
 
 
 def get_impacts():
-    return coll_im.find()
+    return coll_im.find_one()
 
 
 def get_events():
-    return coll_eve.find()
+    return coll_eve.find_one()
 
 
 def get_entities():
-    return coll_ent.find()
+    return coll_ent.find_one()
 
 
 def get_questions():

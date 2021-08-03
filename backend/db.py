@@ -61,10 +61,10 @@ def get_norm_ref_incidents():
 
 @bp.route('/norm_incidents', methods=['POST'])
 def post_norm_ref_incident(incident):
-    sources = get_sources()
-    events = get_events()
-    entities = get_entities()
-    impacts = get_impacts()
+    sources = db.get_sources()
+    events = db.get_events()
+    entities = db.get_entities()
+    impacts = db.get_impacts()
     norm_incident = normalize_incident(incident, sources, events, entities, impacts)
     db.insert_norm_incident(norm_incident)
     return json_util.dumps(norm_incident)
@@ -91,10 +91,10 @@ def post_user_incident():
     body = request.get_json()
     user_incident = body
     user_incident['myId'] = db.get_new_user_incident_id()
-    sources = get_sources()
-    events = get_events()
-    entities = get_entities()
-    impacts = get_impacts()
+    sources = db.get_sources()
+    events = db.get_events()
+    entities = db.get_entities()
+    impacts = db.get_impacts()
     norm_user_incident = post_norm_user_incident(user_incident, sources, events, entities, impacts)
     norm_ref_incidents = get_norm_ref_incidents()
     question_response = execute_completion(user_incident, sources, events, entities, impacts, norm_user_incident, norm_ref_incidents)
@@ -120,34 +120,6 @@ def post_norm_user_incident(incident, sources, events, entities, impacts):
     norm_incident = normalize_incident(incident, sources, events, entities, impacts)
     db.insert_norm_user_incident(norm_incident)
     return norm_incident
-
-
-################################
-# get topics / attributes
-################################
-
-@bp.route('/sources', methods=['GET'])
-def get_sources():
-    sources = db.get_sources()
-    return json_util.dumps(sources)
-
-
-@bp.route('/impacts', methods=['GET'])
-def get_impacts():
-    impacts = db.get_impacts()
-    return json_util.dumps(impacts)
-
-
-@bp.route('/events', methods=['GET'])
-def get_events():
-    events = db.get_events()
-    return json_util.dumps(events)
-
-
-@bp.route('/entities', methods=['GET'])
-def get_entities():
-    entities = db.get_entities()
-    return json_util.dumps(entities)
 
 
 ################
