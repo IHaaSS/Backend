@@ -55,7 +55,7 @@ async def get_norm_user_incident(id):
     return coll_nui.find_one({'refId': id})
 
 
-def insert_norm_user_incident(incident):
+async def insert_norm_user_incident(incident):
     coll_nui.insert_one(incident)
 
 
@@ -69,7 +69,7 @@ def get_user_incidents():
 
 
 def get_user_incident(id):
-    return coll_ui.find({'refId': id})
+    return coll_ui.find_one({'myId': id})
 
 
 def get_new_user_incident_id():
@@ -82,7 +82,7 @@ async def insert_user_incident(incident):
 
 
 def delete_user_incident(incident_id):
-    coll_ui.delete_one({'refId': incident_id})
+    coll_ui.delete_one({'myId': incident_id})
     return '', 200
 
 

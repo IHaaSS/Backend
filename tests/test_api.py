@@ -19,6 +19,10 @@ class TestAPI(unittest.TestCase):
         response = self.app.post('/user_incidents', json=json.load(data))
         self.assertEqual(response.status_code, 200)
 
+    def test_approve_user_incident(self):
+        response = self.app.post('/user_incidents/approve', json={'myId': 0})
+        self.assertEqual(response.status_code, 200)
+
     def test_post_answer(self):
         data = {"id":0,"phase":1,"answers":[{"value":1,"attributeId":"1","topicId":1}]}
         response = self.app.post('/answer', json=data)

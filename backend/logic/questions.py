@@ -5,33 +5,24 @@ from backend.logic.questionGeneration import get_attribute_name, generate_questi
 from backend.storage import mongo as db
 
 
-def get_questions(ids, phase):
+def get_questions(ids, phase, categories):
     result = []
-    copy_ids = set()
-    for element in ids['sources']:
-        if element not in copy_ids:
-            result.append(get({}, element, ids['sources'], 1, copy_ids, phase))
-    copy_ids = set()
-    for element in ids['events']:
-        if element not in copy_ids:
-            result.append(get({}, element, ids['events'], 2, copy_ids, phase))
-    copy_ids = set()
-    for element in ids['entities']:
-        if element not in copy_ids:
-            result.append(get({}, element, ids['entities'], 3, copy_ids, phase))
-    copy_ids = set()
-    for element in ids['impacts']:
-        if element not in copy_ids:
-            result.append(get({}, element, ids['impacts'], 4, copy_ids, phase))
+    topics_plural = ['sources', 'events', 'entities', 'impacts']
+    for i, c in enumerate(topics_plural):
+        copy_ids = set()
+        for element in ids[c]:
+            if element not in copy_ids:
+                result.append(get({}, element, ids[c], i+1, copy_ids, phase, categories))
+
     return result
 
 
-def get(result, attr_id, ids, topic_id, copy_ids, phase):
+def get(result, attr_id, ids, topic_id, copy_ids, phase, categories):
     relations = db.get_relations(attr_id, topic_id)
     result['questions'] = []
     result['children'] = []
     # generic question get created (refinement + completion)
-    question = generate_generic_question(attr_id, topic_id, phase)
+    question = generate_generic_question(attr_id, topic_id, phase, categories)
     result['questions'].append(question)
     copy_ids.add(attr_id)
     # completion
@@ -46,7 +37,7 @@ def get(result, attr_id, ids, topic_id, copy_ids, phase):
         for element in ids:
             if element[:-2] == attr_id:
                 copy_ids.add(element)
-                result['children'].append(get({}, element, ids, topic_id, copy_ids, phase))
+                result['children'].append(get({}, element, ids, topic_id, copy_ids, phase, categories))
     # refinement
     else:
         for r in relations:
@@ -70,19 +61,9 @@ def get(result, attr_id, ids, topic_id, copy_ids, phase):
     return result
 
 
-def generate_generic_question(attr_id, topic_id, phase):
-    if topic_id == 1:
-        sources = db.get_sources()
-        attribute = get_attribute_name(attr_id, sources)
-    if topic_id == 2:
-        events = db.get_events()
-        attribute = get_attribute_name(attr_id, events)
-    if topic_id == 3:
-        entities = db.get_entities()
-        attribute = get_attribute_name(attr_id, entities)
-    if topic_id == 4:
-        impacts = db.get_impacts()
-        attribute = get_attribute_name(attr_id, impacts)
+def generate_generic_question(attr_id, topic_id, phase, categories):
+    category = categories[topic_id-1]
+    attribute = get_attribute_name(attr_id, category)
     if phase == 1:
         question = {'text': generate_question(attribute), 'answer': 0, 'questionId': 0, 'attrId': attr_id,
                     'topicId': topic_id}
@@ -111,31 +92,30 @@ def generate_manual_counter_question(q, attribute_id, topic_id):
     return question
 
 
-def execute_refinement(u, copy_nui, ref_norm_incidents, sources, events, entities, impacts, s, ev, en, im, body):
+def execute_refinement(u, copy_nui, ref_norm_incidents, categories, s, ev, en, im, body):
     temp = {'title': copy_nui["title"], 'refId': copy_nui["refId"],
             'normSources': create_temp_incident(copy_nui['normSources'], s, body['answers'], 1),
             'normEvents': create_temp_incident(copy_nui['normEvents'], ev, body['answers'], 2),
             'normEntities': create_temp_incident(copy_nui['normEntities'], en, body['answers'], 3),
             'normImpacts': create_temp_incident(copy_nui['normImpacts'], im, body['answers'], 4)}
-    question_ids = calculate_cosine(u, ref_norm_incidents, sources, events, entities, impacts, 2, temp)
+    question_ids = calculate_cosine(u, ref_norm_incidents, *categories, 2, temp)
     if len(question_ids) == 0:
         return {'id': u['refId'], 'questions': [], 'phase': 2}
     else:
-        questions = get_questions(question_ids, 2)
+        questions = get_questions(question_ids, 2, categories)
         question_response = {'id': u['refId'], 'questions': questions, 'phase': 2}
         return question_response
 
 
-def execute_completion(user_incident, sources, events, entities, impacts, norm_user_incident, norm_ref_incidents):
-    question_ids = calculate_cosine(norm_user_incident, norm_ref_incidents, sources, events, entities, impacts, 1, None)
-    questions = get_questions(question_ids, 1)
+def execute_completion(user_incident, categories, norm_user_incident, norm_ref_incidents):
+    question_ids = calculate_cosine(norm_user_incident, norm_ref_incidents, *categories, 1, None)
+    questions = get_questions(question_ids, 1, categories)
     if len(question_ids) == 0:
-        question_ids = calculate_cosine(norm_user_incident, norm_ref_incidents, sources, events, entities, impacts, 2,
-                                        norm_user_incident)
+        question_ids = calculate_cosine(norm_user_incident, norm_ref_incidents, *categories, 2, norm_user_incident)
         if len(question_ids) == 0:
             return {'id': norm_user_incident['refId'], 'questions': [], 'phase': 2}
         else:
-            questions = get_questions(question_ids, 2)
+            questions = get_questions(question_ids, 2, categories)
             question_response = {'id': norm_user_incident['refId'], 'questions': questions, 'phase': 2}
             return question_response
     else:

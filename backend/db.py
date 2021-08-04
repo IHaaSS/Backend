@@ -34,16 +34,6 @@ def delete_incident(incident_id):
     return '', 200
 
 
-@bp.route('/transferIncidents', methods=['POST'])
-async def post_StagedIncident():
-    body = request.get_json()
-    uid = body.pop('myId')
-    incident = await save_incident(body, 'user')
-    db.delete_user_incident({'myId': uid})
-    db.delete_norm_user_incident({'refId': uid})
-    return json_util.dumps(incident)
-
-
 #################
 # user incidents
 #################
@@ -62,12 +52,28 @@ async def post_user_incident():
     categories = await db.get_categories()
     norm_user_incident = normalize_incident(user_incident, *categories)
     norm_ref_incidents = await db.get_norm_incidents()
-    question_response = execute_completion(user_incident, *categories, norm_user_incident, norm_ref_incidents)
+    question_response = execute_completion(user_incident, categories, norm_user_incident, norm_ref_incidents)
     await asyncio.gather(*[
         db.insert_norm_user_incident(norm_user_incident),
         db.insert_user_incident(user_incident)
     ])
     return question_response
+
+
+@bp.route('/user_incidents/approve', methods=['POST'])
+async def approve_user_incident():
+    body = request.get_json()
+    uid = body.pop('myId')
+    user_incident = db.get_user_incident(uid)
+    incident = await save_incident(user_incident, 'user')
+    remove_user_incident(uid)
+    return json_util.dumps(incident)
+
+
+@bp.route('/user_incidents/<incident_id>', methods=['DELETE'])
+async def delete_user_incident(incident_id):
+    remove_user_incident(incident_id)
+    return ''
 
 
 ################
@@ -134,8 +140,8 @@ async def post_answer():
 
     if body['phase'] == 1:
         db.delete_norm_user_incident(u['refId'])
-        db.insert_norm_user_incident(u)
-        return execute_refinement(u, copy_nui, ref_norm_incidents, *categories, *categories_ids, body)
+        await db.insert_norm_user_incident(u)
+        return execute_refinement(u, copy_nui, ref_norm_incidents, categories, *categories_ids, body)
 
 
 async def save_incident(incident, transmitted_by):
@@ -145,3 +151,8 @@ async def save_incident(incident, transmitted_by):
     norm_incident = normalize_incident(incident, *categories)
     await db.insert_norm_incident(norm_incident)
     return incident
+
+
+def remove_user_incident(uid):
+    db.delete_user_incident({'myId': uid})
+    db.delete_norm_user_incident({'refId': uid})
