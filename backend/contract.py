@@ -50,3 +50,17 @@ async def add_incident_comment():
         [(attachment_name, eth.ipfs2bytes(ipfsRefs[1]))]
     )
     return '', 200
+
+
+@bp.route('/incidents/vote', methods=['POST'])
+def vote_incident():
+    body = request.get_json()
+    icd.vote_incident(body['ref'], body['vote'])
+    return '', 200
+
+
+@bp.route('/incidents/comments/vote', methods=['POST'])
+def vote_incident_comment():
+    body = request.get_json()
+    icd.vote_comment(body['ref'], body['vote'])
+    return '', 200

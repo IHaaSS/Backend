@@ -53,6 +53,21 @@ class TestAPI(unittest.TestCase):
         self.assertGreaterEqual(len(incidents[0]['comments']), 1)
         self.assertEqual(response.status_code, 200)
 
+    def test_vote_incident(self):
+        response = self.app.post('/contract/incidents/vote', json={
+                                 'ref': incident1b,
+                                 'vote': 1
+        })
+        self.assertEqual(response.status_code, 200)
+
+    def test_vote_comment(self):
+        ref = eth.keccak256(incident1b, 1).hex()
+        response = self.app.post('/contract/incidents/comments/vote', json={
+            'ref': ref,
+            'vote': -1
+        })
+        self.assertEqual(response.status_code, 200)
+
     def test_ipfs(self):
         response = self.app.get('/ipfs/' + incident1)
         result = json.loads(response.data)

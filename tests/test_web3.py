@@ -29,11 +29,11 @@ class TestWeb3(aiounittest.AsyncTestCase):
         self.assertEqual(len(res), 8)
 
     def test_vote_incident(self):
-        res = icd.vote_incident(incident1b, True)
+        res = icd.vote_incident(incident1b, 1)
         self.assertEqual(len(res), 32)
 
     def test_remove_incident(self):
-        res = icd.remove_incident(incident1b, 0)
+        res = icd.remove_incident(incident1b)
         self.assertEqual(len(res), 32)
 
     async def test_get_comment(self):
@@ -42,6 +42,10 @@ class TestWeb3(aiounittest.AsyncTestCase):
 
     def test_add_comment(self):
         res = icd.add_comment(comment1b, incident1b, comment1b, [('testattachment', attachb)])
+        self.assertEqual(len(res), 32)
+
+    def test_vote_comment(self):
+        res = icd.vote_comment(comment1ref, -1)
         self.assertEqual(len(res), 32)
 
 

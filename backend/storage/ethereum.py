@@ -30,22 +30,17 @@ class IncidentsContract:
     async def get_incident(self, ref):
         incident = self.i.functions.getIncident(ref).call()
         comments = []
-        for j, c in enumerate(incident[1]):
-            comments.append(comment2dict(c, incident[0][2][j]))
-        attachments = []
-        for a in incident[2]:
-            attachments.append(attachment2dict(a))
+        for j, c in enumerate(incident[2]):
+            comments.append(comment2dict(c, keccak256(ref, j)))
 
-        incident = incident[0]
         return {
             'ref': ref,
             'content': hex2ipfs(ref),
             'created': incident[0],
             'author': incident[1],
             'comments': comments,
-            'attachments': attachments,
-            'votedUp': incident[4],
-            'votedDown': incident[5]
+            'attachments': [attachment2dict(a) for a in incident[3]],
+            'votes': incident[4]
         }
 
     def add_incident(self, ref, attachments=None):
@@ -56,6 +51,9 @@ class IncidentsContract:
 
     def vote_incident(self, ref, up):
         return self.i.functions.voteIncident(ref, up).transact()
+
+    def vote_comment(self, ref, up):
+        return self.i.functions.voteComment(ref, up).transact()
 
     async def get_comment(self, incident, index):
         ref = keccak256(incident, index)
@@ -110,7 +108,6 @@ def comment2dict(c, ref):
         'created': c[1],
         'author': c[2],
         'content': hex2ipfs(to_hex(c[3])),
-        'attachmentList': bytes2hex(c[4]),
-        'votedUp': c[5],
-        'votedDown': c[6]
+        'attachments': [attachment2dict(a) for a in c[4]],
+        'votes': c[5]
     }
