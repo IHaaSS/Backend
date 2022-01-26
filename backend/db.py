@@ -134,13 +134,11 @@ async def post_answer():
     if body['phase'] == 2:
         user_incident = db.get_user_incident(u['refId'])
         rev_incident = reverse_norm_incident(u, *categories, user_incident)
-        db.delete_user_incident({'myId': u['refId']})
-        await db.insert_user_incident(rev_incident)
+        db.update_user_incident(rev_incident)
         return {'id': u['refId'], 'questions': [], 'phase': 2}
 
     if body['phase'] == 1:
-        db.delete_norm_user_incident(u['refId'])
-        await db.insert_norm_user_incident(u)
+        db.update_norm_incident(u)
         return execute_refinement(u, copy_nui, ref_norm_incidents, categories, *categories_ids, body)
 
 

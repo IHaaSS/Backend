@@ -24,7 +24,10 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_post_answer(self):
-        data = {"id":0,"phase":1,"answers":[{"value":1,"attributeId":"1","topicId":1}]}
+        data = {"id":9,"phase":1,"answers":[{"value":1,"attributeId":"2","topicId":1},{"value":1,"attributeId":"2","topicId":2},{"value":1,"attributeId":"3","topicId":4}]}
+        response = self.app.post('/answer', json=data)
+        self.assertEqual(response.status_code, 200)
+        data = {"id":11,"phase":2,"answers":[{"value":1,"attributeId":"2-2-2-2","topicId":2}]}
         response = self.app.post('/answer', json=data)
         self.assertEqual(response.status_code, 200)
 
