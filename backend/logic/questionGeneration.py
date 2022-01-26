@@ -66,8 +66,8 @@ def generate_counter_question(attribute):
 
 
 def get_attribute_name(attr_id, topic):
-    id_list = generate_id_list(topic[0], [])
-    names = generate_name_list(topic[0], [])
+    id_list = generate_id_list(topic, [])
+    names = generate_name_list(topic, [])
     index = id_list.index(attr_id)
     attribute = names[index]
     return attribute
