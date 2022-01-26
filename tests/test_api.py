@@ -20,7 +20,7 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_approve_user_incident(self):
-        response = self.app.post('/user_incidents/approve', json={'myId': 0})
+        response = self.app.post('/user_incidents/approve', json={'myId': 5})
         self.assertEqual(response.status_code, 200)
 
     def test_post_answer(self):

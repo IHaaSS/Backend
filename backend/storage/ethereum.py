@@ -44,7 +44,10 @@ class IncidentsContract:
         }
 
     def add_incident(self, ref, attachments=None):
-        return self.i.functions.addIncident(ipfs2bytes(ref), attachments).transact()
+        if attachments:
+            return self.i.functions.addIncident(ipfs2bytes(ref), attachments).transact()
+        else:
+            return self.i.functions.addIncidentOnly(ipfs2bytes(ref)).transact()
 
     def remove_incident(self, ref):
         return self.i.functions.removeIncident(ref).transact()

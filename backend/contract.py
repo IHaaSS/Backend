@@ -24,11 +24,16 @@ async def add_incident():
     attachment = request.files['attachment']
     attachment_name = request.form.get('attachmentName')
     incident = json.loads(request.form.get('incident'))
-    ipfsRefs = await asyncio.gather(*[
-        ipfs.write_json(incident),
-        ipfs.write_file(attachment)
-    ])
-    icd.add_incident(ipfsRefs[0], [(attachment_name, eth.ipfs2bytes(ipfsRefs[1]))])
+    has_attachment = attachment_name == ""
+    requests = [ipfs.write_json(incident)]
+    if has_attachment:
+        requests.append(ipfs.write_file(attachment))
+    ipfsRefs = await asyncio.gather(*requests)
+
+    attachments = [(attachment_name, eth.ipfs2bytes(ipfsRefs[1]))] \
+        if has_attachment else None
+    icd.add_incident(ipfsRefs[0], attachments)
+
     return '', 200
 
 

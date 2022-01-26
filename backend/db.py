@@ -2,6 +2,8 @@ from flask import Blueprint, request
 import asyncio
 from bson import json_util
 from backend.storage import mongo as db
+from backend.storage import ethereum as eth
+from backend.storage import ipfs
 
 from backend.logic.normalization import normalize_incident, generate_id_list, reverse_norm_incident
 from backend.logic.questions import execute_refinement, execute_completion
@@ -9,6 +11,7 @@ from backend.logic.utils import update_norm_user_incident
 
 bp = Blueprint("db", __name__)
 
+icd = eth.IncidentsContract()
 
 #####################
 # reference incidents
@@ -67,6 +70,11 @@ async def approve_user_incident():
     user_incident = db.get_user_incident(uid)
     incident = await save_incident(user_incident, 'user')
     remove_user_incident(uid)
+
+    # save to contract
+    ipfs_ref = await ipfs.write_json(json_util.dumps(incident))
+    icd.add_incident(ipfs_ref)
+
     return json_util.dumps(incident)
 
 
@@ -152,5 +160,5 @@ async def save_incident(incident, transmitted_by):
 
 
 def remove_user_incident(uid):
-    db.delete_user_incident({'myId': uid})
-    db.delete_norm_user_incident({'refId': uid})
+    db.delete_user_incident(uid)
+    db.delete_norm_user_incident(uid)
