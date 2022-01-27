@@ -3,6 +3,7 @@ import os
 from base58 import b58decode, b58encode
 from web3 import Web3
 from web3.middleware import construct_sign_and_send_raw_middleware
+from web3.gas_strategies.time_based import medium_gas_price_strategy
 from eth_account import Account
 
 
@@ -11,6 +12,7 @@ class IncidentsContract:
         # Web3 setup
         w3 = Web3(Web3.WebsocketProvider('ws://' + os.getenv('ETH_IP') +
                                          ':' + os.getenv('ETH_PORT')))
+        w3.eth.set_gas_price_strategy(medium_gas_price_strategy)
 
         acct = Account.from_key(os.getenv('SECRET_KEY'))
         w3.middleware_onion.add(construct_sign_and_send_raw_middleware(acct))
