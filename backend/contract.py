@@ -30,8 +30,10 @@ async def add_incident():
         requests.append(ipfs.write_file(attachment))
     ipfsRefs = await asyncio.gather(*requests)
 
-    attachments = [(attachment_name, eth.ipfs2bytes(ipfsRefs[1]))] \
-        if has_attachment else None
+    attachments = []
+    if has_attachment:
+        attachments.append(attachment_name, eth.ipfs2bytes(ipfsRefs[1]))
+
     icd.add_incident(ipfsRefs[0], attachments)
 
     return '', 200
@@ -42,17 +44,24 @@ async def add_incident_comment():
     parent = request.form.get('parent')
     incident = request.form.get('incident')
     comment = request.form.get('comment')
-    attachment = request.files['attachment']
-    attachment_name = request.form.get('attachmentName')
-    ipfsRefs = await asyncio.gather(*[
-        ipfs.write_json(comment),
-        ipfs.write_file(attachment)
-    ])
+
+    requests = [ipfs.write_json(comment)]
+    attachments = []
+    if 'attachment' in request.files:
+        attachment = request.files['attachment']
+        attachment_name = request.form.get('attachmentName')
+        requests.append(ipfs.write_file(attachment))
+
+    ipfsRefs = await asyncio.gather(*requests)
+
+    if len(ipfsRefs) > 1:
+        attachments.append((attachment_name, eth.ipfs2bytes(ipfsRefs[1])))
+
     icd.add_comment(
         parent,
         eth.ipfs2bytes(ipfsRefs[0]),
         incident,
-        [(attachment_name, eth.ipfs2bytes(ipfsRefs[1]))]
+        attachments
     )
     return '', 200
 

@@ -45,12 +45,18 @@ class TestAPI(unittest.TestCase):
 
     def test_add_incident_comment(self):
         attachment = open(test_file, 'rb')
-        response = self.app.post('/contract/incidents/comments', data={
+        data = {
             'parent': comment1b,
             'incident': incident1b,
+            'comment': "This is a comment"
+        }
+        response = self.app.post('/contract/incidents/comments', data=data, content_type="multipart/form-data")
+        self.assertEqual(response.status_code, 200)
+        data.update({
             'attachment': attachment,
             'attachmentName': test_file
-        }, content_type="multipart/form-data")
+        })
+        response = self.app.post('/contract/incidents/comments', data=data, content_type="multipart/form-data")
         self.assertEqual(response.status_code, 200)
 
     def test_get_incidents(self):
