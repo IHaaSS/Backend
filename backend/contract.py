@@ -41,9 +41,10 @@ async def add_incident():
 
 @bp.route('/incidents/comments', methods=['POST'])
 async def add_incident_comment():
-    parent = request.form.get('parent')
-    incident = request.form.get('incident')
-    comment = request.form.get('comment')
+    body = request.get_json()
+    parent = body['parent']
+    incident = body['incident']
+    comment = body['comment']
 
     requests = [ipfs.write_json(comment)]
     attachments = []

@@ -50,13 +50,13 @@ class TestAPI(unittest.TestCase):
             'incident': incident1b,
             'comment': "This is a comment"
         }
-        response = self.app.post('/contract/incidents/comments', data=data, content_type="multipart/form-data")
+        response = self.app.post('/contract/incidents/comments', json=data)
         self.assertEqual(response.status_code, 200)
         data.update({
             'attachment': attachment,
             'attachmentName': test_file
         })
-        response = self.app.post('/contract/incidents/comments', data=data, content_type="multipart/form-data")
+        response = self.app.post('/contract/incidents/comments', json=data)
         self.assertEqual(response.status_code, 200)
 
     def test_get_incidents(self):
