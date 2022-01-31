@@ -73,7 +73,7 @@ async def approve_user_incident():
 
     # save to contract
     ipfs_ref = await ipfs.write_json(json_util.dumps(incident))
-    icd.add_incident(ipfs_ref)
+    icd.add_incident(ipfs_ref, [])
 
     return json_util.dumps(incident)
 
