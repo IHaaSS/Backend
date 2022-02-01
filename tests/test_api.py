@@ -23,6 +23,10 @@ class TestAPI(unittest.TestCase):
         response = self.app.post('/user_incidents/approve', json={'myId': 5})
         self.assertEqual(response.status_code, 200)
 
+    def test_delete_user_incident(self):
+        response = self.app.delete('/user_incidents/1')
+        self.assertEqual(response.status_code, 200)
+
     def test_post_answer(self):
         data = {"id":9,"phase":1,"answers":[{"value":1,"attributeId":"2","topicId":1},{"value":1,"attributeId":"2","topicId":2},{"value":1,"attributeId":"3","topicId":4}]}
         response = self.app.post('/answer', json=data)
