@@ -105,7 +105,7 @@ def attachment2dict(a):
 
 def comment2dict(c, ref):
     return {
-        'ref': to_hex(ref),
+        'ref': ref.hex(),
         'parent': to_hex(c[0]),
         'created': c[1],
         'author': c[2],

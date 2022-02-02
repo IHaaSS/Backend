@@ -60,8 +60,8 @@ async def add_incident_comment():
 
     icd.add_comment(
         parent,
-        eth.ipfs2bytes(ipfsRefs[0]),
         incident,
+        eth.ipfs2bytes(ipfsRefs[0]),
         attachments
     )
     return '', 200
