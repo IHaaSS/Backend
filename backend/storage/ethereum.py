@@ -33,7 +33,7 @@ class IncidentsContract:
         incident = self.i.functions.getIncident(ref).call()
         comments = []
         for j, c in enumerate(incident[2]):
-            comments.append(comment2dict(c, keccak256(ref, j)))
+            comments.append(comment2dict(c))
 
         return {
             'ref': ref,
@@ -57,10 +57,9 @@ class IncidentsContract:
     def vote_comment(self, ref, up):
         return self.i.functions.voteComment(ref, up).transact()
 
-    async def get_comment(self, incident, index):
-        ref = keccak256(incident, index)
+    async def get_comment(self, ref):
         c = self.i.functions.getComment(ref).call()
-        return comment2dict(c, ref)
+        return comment2dict(c)
 
     def add_comment(self, parent, incident, content, attachments):
         ref = self.i.functions.addComment(parent, incident, content, attachments).transact()
@@ -70,10 +69,6 @@ class IncidentsContract:
 ############
 # HELPERS
 ############
-
-def keccak256(*values):
-    return Web3.solidityKeccak(['bytes32', 'uint256'], values)
-
 
 def ipfs2bytes(ipfsRef):
     return '0x' + b58decode(ipfsRef)[2:].hex()
@@ -104,13 +99,13 @@ def attachment2dict(a):
     }
 
 
-def comment2dict(c, ref):
+def comment2dict(c):
     return {
-        'ref': ref.hex(),
-        'parent': to_hex(c[0]),
-        'created': c[1],
-        'author': c[2],
-        'content': hex2ipfs(to_hex(c[3])),
-        'attachments': [attachment2dict(a) for a in c[4]],
-        'votes': c[5]
+        'ref': to_hex(c[0]),
+        'parent': to_hex(c[1]),
+        'created': c[2],
+        'author': c[3],
+        'content': hex2ipfs(to_hex(c[4])),
+        'attachments': [attachment2dict(a) for a in c[5]],
+        'votes': c[6]
     }

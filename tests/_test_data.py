@@ -14,6 +14,5 @@ incident1b = eth.ipfs2bytes(incident1)
 incident2b = eth.ipfs2bytes(incident2)
 comment1b = eth.ipfs2bytes(comment1)
 comment2b = eth.ipfs2bytes(comment2)
-comment1ref = eth.keccak256(incident1b, 0)
 attachb = eth.ipfs2bytes(attachment)
 test_file='images/dataInstruction.png'
