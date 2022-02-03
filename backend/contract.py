@@ -58,13 +58,13 @@ async def add_incident_comment():
     if len(ipfsRefs) > 1:
         attachments.append((attachment_name, eth.ipfs2bytes(ipfsRefs[1])))
 
-    icd.add_comment(
+    ref = icd.add_comment(
         parent,
         incident,
         eth.ipfs2bytes(ipfsRefs[0]),
         attachments
     )
-    return '', 200
+    return ref
 
 
 @bp.route('/incidents/vote', methods=['POST'])
