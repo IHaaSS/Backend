@@ -63,7 +63,8 @@ class IncidentsContract:
         return comment2dict(c, ref)
 
     def add_comment(self, parent, incident, content, attachments):
-        return self.i.functions.addComment(parent, incident, content, attachments).transact()
+        ref = self.i.functions.addComment(parent, incident, content, attachments).transact()
+        return ref.hex()
 
 
 ############
