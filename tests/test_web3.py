@@ -12,9 +12,9 @@ class TestWeb3(aiounittest.AsyncTestCase):
     def test_init_contract(self):
         icd.add_incident(incident1, [{'name': 'test', 'content': attachb}])
         icd.add_incident(incident2, [])
-        icd.add_comment(comment1b, incident1b, comment1b, [('testattachment', attachb)])
-        icd.add_comment(comment1b, incident1b, comment2b, [])
-        icd.add_comment(comment1b, incident2b, comment1b, [])
+        comment1_ref = icd.add_comment(incident1b, incident1b, comment1b, [('testattachment', attachb)])
+        icd.add_comment(comment1_ref, incident1b, comment2b, [])
+        icd.add_comment(incident2b, incident2b, comment1b, [])
 
     def test_add_incident(self):
         res = icd.add_incident(incident1, [{'name': 'test', 'content': attachb}])

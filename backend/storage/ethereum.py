@@ -10,20 +10,20 @@ from eth_account import Account
 class IncidentsContract:
     def __init__(self):
         # Web3 setup
-        w3 = Web3(Web3.WebsocketProvider('ws://' + os.getenv('ETH_IP') +
+        self.w3 = Web3(Web3.WebsocketProvider('ws://' + os.getenv('ETH_IP') +
                                          ':' + os.getenv('ETH_PORT')))
-        w3.eth.set_gas_price_strategy(medium_gas_price_strategy)
+        self.w3.eth.set_gas_price_strategy(medium_gas_price_strategy)
 
         acct = Account.from_key(os.getenv('SECRET_KEY'))
-        w3.middleware_onion.add(construct_sign_and_send_raw_middleware(acct))
-        w3.eth.default_account = acct.address
+        self.w3.middleware_onion.add(construct_sign_and_send_raw_middleware(acct))
+        self.w3.eth.default_account = acct.address
 
         # Contract setup
         with open('../contract/build/contracts/Incidents.json', 'r') as file:
             abi = json.load(file)
 
         deployments = list(abi['networks'].items())
-        self.i = w3.eth.contract(address=deployments[0][1]['address'], abi=abi['abi'])
+        self.i = self.w3.eth.contract(address=deployments[0][1]['address'], abi=abi['abi'])
 
     def get_incidents(self):
         incidents = self.i.functions.getIncidents().call()
@@ -62,13 +62,17 @@ class IncidentsContract:
         return comment2dict(c)
 
     def add_comment(self, parent, incident, content, attachments):
-        ref = self.i.functions.addComment(parent, incident, content, attachments).transact()
-        return ref.hex()
+        tx = self.i.functions.addComment(parent, incident, content, attachments).transact()
+        receipt = self.w3.eth.wait_for_transaction_receipt(tx)
+        return receipt['logs'][0]['data']
 
 
 ############
 # HELPERS
 ############
+def keccak256(*values):
+    return Web3.solidityKeccak(['bytes32', 'uint256'], values)
+
 
 def ipfs2bytes(ipfsRef):
     return '0x' + b58decode(ipfsRef)[2:].hex()
