@@ -55,7 +55,9 @@ async def post_user_incident():
     categories = await db.get_categories()
     norm_user_incident = normalize_incident(user_incident, *categories)
     norm_ref_incidents = await db.get_norm_incidents()
-    question_response = execute_completion(user_incident, categories, norm_user_incident, norm_ref_incidents)
+    question_response = ''
+    if len(norm_ref_incidents) > 0:
+        question_response = execute_completion(user_incident, categories, norm_user_incident, norm_ref_incidents)
     await asyncio.gather(*[
         db.insert_norm_user_incident(norm_user_incident),
         db.insert_user_incident(user_incident)
