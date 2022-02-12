@@ -38,7 +38,12 @@ services:
         ports:
             - 5000:5000
 
-    config-tool:
-        build: ./deployment/configTool
+#     # config-tool:
+#     #     build: ./deployment/configTool
+#     #     ports:
+#     #         - 5200:4200
+
+    frontend:
+        build: ./deployment/frontend
         ports:
-            - 5200:4200
+            - 8080:80
