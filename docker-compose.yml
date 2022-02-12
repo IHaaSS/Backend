@@ -23,6 +23,7 @@ services:
 
     ganache-cli:
         image: trufflesuite/ganache-cli:latest
+        restart: always
         ports:
             - "8545:8545"
         entrypoint:
@@ -46,4 +47,4 @@ services:
     frontend:
         build: ./deployment/frontend
         ports:
-            - 8080:80
+            - 80:80
