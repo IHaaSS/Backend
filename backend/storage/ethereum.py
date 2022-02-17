@@ -42,7 +42,8 @@ class IncidentsContract:
             'author': incident[1],
             'comments': comments,
             'attachments': [attachment2dict(a) for a in incident[3]],
-            'votes': incident[4]
+            'votes': incident[4],
+            'status': incident[5]
         }
 
     def add_incident(self, ref, attachments):
@@ -54,15 +55,15 @@ class IncidentsContract:
     def vote_incident(self, ref, up):
         return self.i.functions.voteIncident(ref, up).transact()
 
-    def vote_comment(self, ref, up):
-        return self.i.functions.voteComment(ref, up).transact()
+    def vote_comment(self, incident, ref, up):
+        return self.i.functions.voteComment(incident, ref, up).transact()
 
     async def get_comment(self, ref):
         c = self.i.functions.getComment(ref).call()
         return comment2dict(c)
 
-    def add_comment(self, parent, incident, content, attachments):
-        tx = self.i.functions.addComment(parent, incident, content, attachments).transact()
+    def add_comment(self, parent, incident, content, attachments, incident_update=0, status_update=0):
+        tx = self.i.functions.addComment(parent, incident, content, attachments, incident_update, status_update).transact()
         receipt = self.w3.eth.wait_for_transaction_receipt(tx)
         return receipt['logs'][0]['data']
 
@@ -111,5 +112,7 @@ def comment2dict(c):
         'author': c[3],
         'content': hex2ipfs(to_hex(c[4])),
         'attachments': [attachment2dict(a) for a in c[5]],
-        'votes': c[6]
+        'votes': c[6],
+        'incident_update': c[7],
+        'status_update': c[8]
     }

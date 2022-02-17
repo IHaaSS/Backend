@@ -32,7 +32,7 @@ async def add_incident():
 
     attachments = []
     if has_attachment:
-        attachments.append(attachment_name, eth.ipfs2bytes(ipfsRefs[1]))
+        attachments.append((attachment_name, eth.ipfs2bytes(ipfsRefs[1])))
 
     icd.add_incident(ipfsRefs[0], attachments)
 
@@ -41,10 +41,12 @@ async def add_incident():
 
 @bp.route('/incidents/comments', methods=['POST'])
 async def add_incident_comment():
-    body = request.get_json()
-    parent = body['parent']
-    incident = body['incident']
-    comment = body['comment']
+    body = request.form
+    parent = body.get('parent')
+    incident = body.get('incident')
+    comment = body.get('comment')
+    incident_update = body.get('incident_update', bytes(0))
+    status_update = body.get('status_update', 0)
 
     requests = [ipfs.write_json(comment)]
     attachments = []
@@ -62,7 +64,9 @@ async def add_incident_comment():
         parent,
         incident,
         eth.ipfs2bytes(ipfsRefs[0]),
-        attachments
+        attachments,
+        incident_update,
+        status_update
     )
     return ref
 
@@ -77,5 +81,5 @@ def vote_incident():
 @bp.route('/incidents/comments/vote', methods=['POST'])
 def vote_incident_comment():
     body = request.get_json()
-    icd.vote_comment(body['ref'], body['vote'])
+    icd.vote_comment(body['incident'], body['ref'], body['vote'])
     return '', 200

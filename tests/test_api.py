@@ -54,13 +54,13 @@ class TestAPI(unittest.TestCase):
             'incident': incident1b,
             'comment': "This is a comment"
         }
-        response = self.app.post('/contract/incidents/comments', json=data)
+        response = self.app.post('/contract/incidents/comments', data=data)
         self.assertEqual(response.status_code, 200)
         data.update({
             'attachment': attachment,
             'attachmentName': test_file
         })
-        response = self.app.post('/contract/incidents/comments', json=data)
+        response = self.app.post('/contract/incidents/comments', data=data, content_type="multipart/form-data")
         self.assertEqual(response.status_code, 200)
 
     def test_get_incidents(self):
@@ -80,6 +80,7 @@ class TestAPI(unittest.TestCase):
     def test_vote_comment(self):
         ref = eth.keccak256(incident1b, 1).hex()
         response = self.app.post('/contract/incidents/comments/vote', json={
+            'incident': incident1b,
             'ref': ref,
             'vote': -1
         })

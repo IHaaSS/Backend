@@ -12,9 +12,9 @@ class TestWeb3(aiounittest.AsyncTestCase):
     def test_init_contract(self):
         icd.add_incident(incident1, [{'name': 'test', 'content': attachb}])
         icd.add_incident(incident2, [])
-        comment1_ref = icd.add_comment(incident1b, incident1b, comment1b, [('testattachment', attachb)])
-        icd.add_comment(comment1_ref, incident1b, comment2b, [])
-        icd.add_comment(incident2b, incident2b, comment1b, [])
+        comment1_ref = icd.add_comment(incident1b, incident1b, comment1b, [('testattachment', attachb)], incident2b, 2)
+        icd.add_comment(comment1_ref, incident1b, comment2b, [], incident2b, 2)
+        icd.add_comment(incident2b, incident2b, comment1b, [], incident2b, 2)
 
     def test_add_incident(self):
         res = icd.add_incident(incident1, [{'name': 'test', 'content': attachb}])
@@ -41,8 +41,8 @@ class TestWeb3(aiounittest.AsyncTestCase):
         self.assertEqual(len(res), 7)
 
     def test_add_comment(self):
-        res = icd.add_comment(comment1b, incident1b, comment1b, [('testattachment', attachb)])
-        self.assertEqual(len(res), 32)
+        res = icd.add_comment(comment1b, incident1b, comment1b, [('testattachment', attachb)], incident2b, 2)
+        self.assertEqual(len(res), 66)
 
 
 if __name__ == '__main__':
