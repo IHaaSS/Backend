@@ -46,7 +46,7 @@ async def add_incident_comment():
     incident = body.get('incident')
     comment = body.get('comment')
     incident_update = body.get('incident_update', bytes(0))
-    status_update = body.get('status_update', 0)
+    status_update = int(body.get('status_update', 0))
 
     requests = [ipfs.write_json(comment)]
     attachments = []

@@ -52,7 +52,9 @@ class TestAPI(unittest.TestCase):
         data = {
             'parent': comment1b,
             'incident': incident1b,
-            'comment': "This is a comment"
+            'comment': "This is a comment",
+            'incident_update': incident2b,
+            'status_update': 2
         }
         response = self.app.post('/contract/incidents/comments', data=data)
         self.assertEqual(response.status_code, 200)
