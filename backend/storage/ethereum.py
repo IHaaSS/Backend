@@ -113,6 +113,6 @@ def comment2dict(c):
         'content': hex2ipfs(to_hex(c[4])),
         'attachments': [attachment2dict(a) for a in c[5]],
         'votes': c[6],
-        'incident_update': c[7],
+        'incident_update': to_hex(c[7]),
         'status_update': c[8]
     }
