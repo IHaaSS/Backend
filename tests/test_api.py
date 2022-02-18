@@ -48,12 +48,13 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_add_incident_comment(self):
+        incident = open(test_incident, 'r')
         attachment = open(test_file, 'rb')
         data = {
             'parent': comment1b,
             'incident': incident1b,
             'comment': "This is a comment",
-            'incident_update': incident2b,
+            'incident_update': incident.read(),
             'status_update': 2
         }
         response = self.app.post('/contract/incidents/comments', data=data)

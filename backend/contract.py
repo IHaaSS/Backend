@@ -45,20 +45,30 @@ async def add_incident_comment():
     parent = body.get('parent')
     incident = body.get('incident')
     comment = body.get('comment')
-    incident_update = body.get('incident_update', bytes(0))
+    incident_update = body.get('incident_update', "")
     status_update = int(body.get('status_update', 0))
 
     requests = [ipfs.write_json(comment)]
+    has_incident_update = incident_update != ""
+    if has_incident_update:
+        requests.append(ipfs.write_json(json.loads(incident_update)))
+
     attachments = []
-    if 'attachment' in request.files:
+    has_attachment = 'attachment' in request.files
+    if has_attachment:
         attachment = request.files['attachment']
         attachment_name = request.form.get('attachmentName')
         requests.append(ipfs.write_file(attachment))
 
     ipfsRefs = await asyncio.gather(*requests)
 
-    if len(ipfsRefs) > 1:
-        attachments.append((attachment_name, eth.ipfs2bytes(ipfsRefs[1])))
+    attachment_index = int(has_attachment) + int(has_incident_update)
+    if has_attachment:
+        attachments.append((attachment_name, eth.ipfs2bytes(ipfsRefs[attachment_index])))
+
+    incident_update = bytes(0)
+    if has_incident_update:
+        incident_update = eth.ipfs2bytes(ipfsRefs[1])
 
     ref = icd.add_comment(
         parent,
