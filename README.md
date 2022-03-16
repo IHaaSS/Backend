@@ -1,29 +1,39 @@
-# Python Server
+# BISCUIT Backend
 
-This project was created using [PyCharm - Community Edition](https://www.jetbrains.com/de-de/pycharm/download) and [Python 3.8](https://www.python.org/downloads/) as project interpreter.
-The default/underlying database is a MongoDB deployed by MongoDB Atlas. However you can define your own Mongo DB.
+*This repository is part of a research project on blockchain security incident reporting based on human observations. The research paper is currently under review.*
 
-## Set up your MongoDB
-- Create Database 
-- Create necessary collection "sources" & fill it with the data from data/sources.json
-![](images/dataInstruction.png)
-- Create necessary collection "events" & fill it with the data from data/events.json
-- Create necessary collection "entities" & fill it with the data from data/entities.json
-- Create necessary collection "impacts" & fill it with the data from data/impacts.json
+Security incidents in blockchain-based systems are frequent nowadays, which calls for more structured efforts in incident reporting and response. To improve the current status quo of reporting incidents on blogs and social media, we propose a decentralized incident reporting and discussion system.
+This repository implements the associated backend, which connects the frontend/presentation layer to the various backend storage components (MongoDB, IPFS, Ethereum).
 
-Update the database-url and the database-name in app.py to enable the connection to the MongoDB you've just created.
+The following image higlights the app layers and architecture:
 
-## Configurations to run the server locally
-Following packages are necessary to run the project: 
-- json
-- scipy
-- nltk
-- random
-- bson
-- numpy
-- flask
-- flask-cors
-- flask-pymongo
-- spacy
+![Architecture of the **BISCUIT** prototype](./images/app_architecture.png "App architecture of BISCUIT")
 
+## Docker
+You can run the entire project with docker-compose using the Dockerfile in the project root.
+
+## Project setup
+
+To run the backend by itself for debugging, first install dependencies
+```
+pip install -r requirements
+```
+
+Set up the contract in a local Ganache instance using Truffle.
+The smart contract is located at https://github.com/biscuitsecurity/contract.
+
+Then create a `.env` file based on `.env.example`. Grab a secret key from one of the default Ganache accounts.
+The Mongo credentials assume you are using the prepared Mongo container from the Dockerfile.
+
+Run the project using
+
+```
+export FLASK_APP=backend
+flask run --host 0.0.0.0
+```
 Server runs locally via entering ```python app.py```at ```http://127.0.0.1:5000/```
+
+## Tests
+
+Unit tests for API, IPFS and Web3 interactions are located in the `tests` directory. They highlight expected usage and
+provide maintainability for future changes.
