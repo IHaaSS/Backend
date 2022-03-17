@@ -10,7 +10,7 @@ The following image higlights the app layers and architecture:
 ![Architecture of the **BISCUIT** prototype](./images/app_architecture.png "App architecture of BISCUIT")
 
 ## Docker
-You can run the entire project with docker-compose using the Dockerfile in the project root.
+You can run the entire project with docker-compose using the Compose file in the project root.
 
 ## Project setup
 
